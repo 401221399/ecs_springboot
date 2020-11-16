@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lpf.ecs_springboot.dao.NoteDao" >
+    <select id="getNote" parameterType="String" resultType="com.lpf.ecs_springboot.entity.Note">
+        select * from ${tableName}
+    </select>
+
+    <select id="getNoteByID" parameterType="String" resultType="com.lpf.ecs_springboot.entity.Note">
+        select * from `${tableName}`
+        where id = ${id}
+    </select>
+
+    <delete id="delNoteByID"  parameterType="String">
+        DELETE FROM ${tableName} where id = #{id}
+    </delete>
+
+    <insert id="addNote"  useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO ${tableName} ( money, `time`, `profile`, `classname`, profitandloss, channel)
+        VALUES ( '${money}','${time}', '${profile}', '${classname}', '${profitandloss}','${channel}' )
+    </insert>
+
+    <update id="updateNote">
+        update ${tableName}
+        SET money='${money}',`time`='${time}',`profile`='${profile}',classname='${classname}',profitandloss='${profitandloss}',channel='${channel}'
+        where id = ${id}
+    </update>
+
+</mapper>

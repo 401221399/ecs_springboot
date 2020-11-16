@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lpf.ecs_springboot.dao.MysqlOperaterDao" >
+    <select id="existTable" parameterType="String" resultType="Integer">
+        select count(*) from information_schema.TABLES
+        where TABLE_NAME=#{tableName} and TABLE_SCHEMA='myg'
+    </select>
+
+    <update id="dropTable">
+        DROP TABLE IF EXISTS ${tableName}
+    </update>
+
+    <update id="createNewTable" parameterType="String">
+        CREATE TABLE  ${tableName} (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        money varchar(255) NOT NULL COMMENT '金额',
+        time varchar(255) NOT NULL COMMENT '记账时间',
+        `profile` varchar(255) DEFAULT NULL COMMENT '备注',
+        classname varchar(255) NOT NULL COMMENT '类型（食，行，用，其他）',
+        profitandloss varchar(255) NOT NULL COMMENT '盈亏（收入1，支出-1）',
+        channel varchar(255) NOT NULL COMMENT '支付途径（支付宝、微信）',
+        PRIMARY KEY (id)
+        )
+    </update>
+
+    <select id="getTableListById" parameterType="String" resultType="String">
+        select TABLE_NAME from information_schema.TABLES
+        where TABLE_NAME like '${id}_%' and TABLE_SCHEMA='myg'
+    </select>
+
+</mapper>
