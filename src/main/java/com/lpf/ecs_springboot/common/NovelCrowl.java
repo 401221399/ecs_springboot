@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -116,7 +118,25 @@ public class NovelCrowl {
         HashMap resuletMap = new HashMap();
         try {
             log.info("爬取："+url);
-            Document document = Jsoup.connect(url).header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36").get();
+            URL U = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection)U.openConnection();
+            //默认就是Get，可以采用post，大小写都行，因为源码里都toUpperCase了。
+            connection.setRequestMethod("GET");
+            //是否允许缓存，默认true。
+            connection.setUseCaches(Boolean.FALSE);
+            //是否开启输出输入，如果是post使用true。默认是false
+            //connection.setDoOutput(Boolean.TRUE);
+            //connection.setDoInput(Boolean.TRUE);
+            //设置请求头信息
+            connection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36");
+            //设置连接主机超时（单位：毫秒）
+            connection.setConnectTimeout(8000);
+            //设置从主机读取数据超时（单位：毫秒）
+            connection.setReadTimeout(8000);
+            //设置Cookie
+            //connection.addRequestProperty("Cookie","你的Cookies" );
+            //开始请求
+            Document document = Jsoup.parse(connection.getInputStream(), "GBK", url);
             String content = document.select("#content").html();
             content = content.replaceAll("&nbsp;&nbsp;","　");
             content = content.replaceAll("\\n","");
