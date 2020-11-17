@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class CartoonCrowl_coco {
     public static Logger log= LoggerFactory.getLogger(CartoonCrowl_coco.class);
     private  String domain = "https://www.cocomanhua.com";
-    private String localDomain = "http://120.78.125.122:8080";
+    private String localDomain = "http://47.112.180.64";
 
 
     public Map Search(String word,String page)
