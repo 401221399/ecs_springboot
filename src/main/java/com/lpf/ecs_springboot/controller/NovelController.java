@@ -1,5 +1,6 @@
 package com.lpf.ecs_springboot.controller;;
 
+import com.lpf.ecs_springboot.common.BqgCrowl;
 import com.lpf.ecs_springboot.common.NovelCrowl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +14,13 @@ import java.util.Map;
 @RequestMapping("/novel")
 public class NovelController {
     public static Logger logger = LoggerFactory.getLogger(NovelController.class);
-    private NovelCrowl novelCrowl;
+//    private NovelCrowl novelCrowl;
+//    public NovelController(){
+////        novelCrowl = new NovelCrowl();
+////    }
+    private BqgCrowl novelCrowl;
     public NovelController(){
-        novelCrowl = new NovelCrowl();
+        novelCrowl = new BqgCrowl();
     }
 
     @CrossOrigin

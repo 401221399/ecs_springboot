@@ -90,7 +90,7 @@ var pageEvent = {
 				var picture_1_1 = document.querySelector('.picture-1-1');
 				if (picture_1_1) {
 					_this2._layer_animate('show');
-					picture_1_1.setAttribute('src', 'http://qjkqgtu9z.bkt.gdipper.com/picture-1-' + index + '.jpg');
+					picture_1_1.setAttribute('src', 'http://resource.yun01.xyz/picture-1-' + index + '.jpg');
 				}
 			}, 500);
 			cut_break.init().show(function () {
@@ -297,6 +297,6 @@ window.addEventListener('load', function () {
 			});
 		}, 2000);
 	} else {
-		document.body.innerHTML = '<div style="padding: 200px;"><div><img src="http://qjkqgtu9z.bkt.gdipper.com/code.png" alt=""></div><div>一起守护最好那个ta吧，手机扫码访问哟！</div></div>';
+		document.body.innerHTML = '<div style="padding: 200px;"><div><img src="http://resource.yun01.xyz/code.png" alt=""></div><div>一起守护最好那个ta吧，手机扫码访问哟！</div></div>';
 	}
 });
