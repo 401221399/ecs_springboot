@@ -25,10 +25,12 @@ public class BqgCrowl {
         HashMap resuletMap = new HashMap();
         List resultList = new ArrayList();
         try {
-            String searchUrl = "http://www.biquge.info/modules/article/search.php?searchkey="+URLEncoder.encode(word,"UTF-8");
+            String searchUrl = "http://www.xbiquge.la/modules/article/waps.php?searchkey="+URLEncoder.encode(word,"UTF-8");
             log.info("爬取："+searchUrl);
-            Document document = Jsoup.connect(searchUrl).header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36").get();
-            Elements searchlist = document.select("#wrapper > table > tbody > tr");
+            Connection c = Jsoup.connect(searchUrl);
+            c.data("searchkey", word);
+            Document document = c.header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36").post();
+            Elements searchlist = document.select("#checkform > table > tbody > tr");
             if(searchlist.size()>0)
             {
                 for(Element item:searchlist)
@@ -39,7 +41,7 @@ public class BqgCrowl {
                     }
                     HashMap returnObj = new HashMap();
                     returnObj.put("name",item.select("td:nth-child(1) > a").text());
-                    returnObj.put("url","http://www.biquge.info"+item.select("td:nth-child(1) > a").attr("href"));
+                    returnObj.put("url",item.select("td:nth-child(1) > a").attr("href"));
                     returnObj.put("author",item.select("td:nth-child(3)").text());
                     resultList.add(returnObj);
                 }
@@ -67,15 +69,11 @@ public class BqgCrowl {
         try {
             log.info("爬取："+url);
             Document document = Jsoup.connect(url).header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36").get();
-            String updata_wordnum = document.select("#info > p:nth-child(4)").text();
-            int Sindex = updata_wordnum.indexOf(":");
-            String updataTime = updata_wordnum.substring(Sindex+1,updata_wordnum.length());
-            String wordnum ="";
             List catalogList =new ArrayList();
             for(Element item : document.select("#list > dl > dd a"))
             {
                 HashMap catalog = new HashMap();
-                catalog.put("url",url+item.attr("href"));
+                catalog.put("url",item.attr("abs:href"));
                 catalog.put("name",item.text());
                 catalogList.add(catalog);
             }
@@ -84,9 +82,9 @@ public class BqgCrowl {
             resuletMap.put("img",document.select("#fmimg > img").attr("src"));
             resuletMap.put("url",document.location());
             resuletMap.put("author",splitAttr(document.select("#info > p:nth-child(2)").text()));
-            resuletMap.put("profile",document.select("#intro > p:nth-child(1)").text());
-            resuletMap.put("updataTime",updataTime);
-            resuletMap.put("wordnum",wordnum);
+            resuletMap.put("profile",document.select("#intro > p:nth-child(2)").text());
+            resuletMap.put("updataTime",splitAttr(document.select("#info > p:nth-child(4)").text()));
+            resuletMap.put("wordnum","");
             resuletMap.put("catalogList",catalogList);
             resuletMap.put("flag","ok");
             log.info("爬取结果"+ JSON.toJSON(resuletMap));
@@ -99,7 +97,7 @@ public class BqgCrowl {
     }
 
     private String splitAttr(String str){
-        int sindex = str.indexOf(":");
+        int sindex = str.indexOf("：");
         String value = str.substring(sindex+1,str.length());
         return value;
     };
