@@ -1,25 +1,32 @@
 package com.lpf.ecs_springboot.common;
 
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import okhttp3.*;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
@@ -38,6 +45,7 @@ public class HttpUtil {
             if(entity!=null){
                 String result = EntityUtils.toString(entity);
                 logger.info("返回参数："+result);
+                result = result.replaceAll("null","\"\"");
                 jsonObject = JSONObject.fromObject(result);
             }
         } catch (IOException e) {
@@ -138,14 +146,40 @@ public class HttpUtil {
         return json;
     }
 
-    public static JSONObject doPoststr(String url,String outStr){
+    public static JSONObject doPoststr(String url,String outStr,boolean isJson){
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         JSONObject jsonObject = null;
         logger.info("请求地址："+url);
-        logger.info("请求入参："+outStr);
         try {
-            httpPost.setEntity(new StringEntity(outStr, "utf-8"));
+            if(isJson){//json格式
+                httpPost.addHeader("Content-Type", "application/json");
+                StringEntity Entity = new StringEntity(outStr, ContentType.create("application/json", "UTF-8"));
+                httpPost.setEntity(Entity);
+            }
+            else {//urlencoded格式
+                httpPost.addHeader("Content-Type","application/x-www-form-urlencoded;charset=utf-8");
+                JSONObject tempItem = JSONObject.fromObject(outStr);
+                List<NameValuePair> list=new ArrayList<>();
+                for (Object key : tempItem.keySet())
+                {
+                    if(tempItem.get(key) instanceof JSONArray)
+                    {
+                        JSONArray List =JSONArray.fromObject(tempItem.get(key));
+                        for(int i=0;i<List.size();i++)
+                        {
+                            list.add(new BasicNameValuePair(key.toString(),List.get(i).toString()));
+                        }
+                    }
+                    else {
+                        list.add(new BasicNameValuePair(key.toString(),tempItem.get(key).toString()));
+                    }
+
+                }
+                UrlEncodedFormEntity postParam=new UrlEncodedFormEntity(list,"UTF-8");
+                httpPost.setEntity(postParam);
+            }
+            logger.info("请求入参："+EntityUtils.toString(httpPost.getEntity()));
             CloseableHttpResponse response = httpclient.execute(httpPost);
             String result = EntityUtils.toString(response.getEntity(),"utf-8");
             logger.info("返回参数："+result);
@@ -153,7 +187,7 @@ public class HttpUtil {
             {
                 logger.info(h.getName()+"----"+h.getValue());
             }
-
+            result = result.replaceAll("null","\"\"");
             jsonObject =JSONObject.fromObject(result);
         } catch (IOException e) {
             e.printStackTrace();
