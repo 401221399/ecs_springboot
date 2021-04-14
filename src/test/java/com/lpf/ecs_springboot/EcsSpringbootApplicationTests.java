@@ -1,9 +1,10 @@
 package com.lpf.ecs_springboot;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.lpf.ecs_springboot.common.BqgCrowl;
 import com.lpf.ecs_springboot.common.CartoonCrowl_coco;
+import com.lpf.ecs_springboot.common.HttpUtil;
+import net.sf.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
@@ -22,9 +23,7 @@ public class  EcsSpringbootApplicationTests {
 
     @Test
     public void Test() throws Exception {
-        BqgCrowl c = new BqgCrowl();
-        String url = "http://www.xbiquge.la/15/15428/8169391.html";
-        System.out.println(c.openCatalog(url));;
+        System.out.println("Test");
     }
 }
 
